@@ -21,11 +21,12 @@ def rename(i):
 			f.seek(8)
 			fileold = f.read(35)
 			if b')' not in fileold:
-				print('Файл ' + str(i) +' не содержит названия внутри!')
 				try:
 					fileold.decode()
+					print('Файл ' + str(i) +' не содержит названия внутри!')
 				except(UnicodeDecodeError):
 					print('Файл '+ str(i) + ' не поддерживается!')
+
 			else:
 				fileold = fileold.split(b')')
 				fileold = fileold[0].decode()
@@ -50,8 +51,8 @@ def rename(i):
 			err.append(i)
 	except(PermissionError):
 		symbols2 = str(78 - len(i))
+		print('Ошибка! В директории присутствует лишняя папка: '+'"'+str(i)+'"')
 		print(i, ('{:.>'+symbols2+'}').format('НЕ СКОПИРОВАН!'))
-		print('Ошибка! В директории присутствует лишняя папка!')
 		err.append(i)
 		pass
 
