@@ -2,16 +2,31 @@ import os
 from tkinter import *
 from tkinter import messagebox
 
-files = [f for f in os.listdir() if f.endswith('.PBG') or f.endswith('.pbg')]
+files = [f for f in os.listdir() if f.endswith('.PBG') or f.endswith('.pbg')] # сканер мазакоских файлов
 print('\nНайдено подходящих файлов Mazatrol: ' + str(len(files)))
 
-badfiles = ('.PBG', '.pbg', '.PY', '.py', '.mp3', '.MP3', '.jpg', '.JPG', '.jpeg', '.JPEG', '.mpeg', '.MPEG', '.mp4', '.MP4', '.webm', '.WEBM', '.bmp', '.BMP')
-files2 = [f for f in os.listdir() if not f.endswith(badfiles)]
+badfiles = ('.PBG', '.PY', # список того, что пропустит фануковский сканер
+	'.MP3', '.FLAC', '.WAV', '.OGG', 
+	'.JPG', '.JPEG', '.BMP', '.ICO', '.TIFF', '.JPE', '.OXPS', '.PSD', '.PNG', '.GIF',
+	'.MPEG', '.MP4', '.WEBM', '.WMA', '.FLV', '.MOV', '3GP', '.AVI', '.VOB', 
+	'.EXE', '.RAR', '.ZIP', '.7Z', '.MSI', '.INSTALL', '.APK'
+	'.XLS', '.XLSX', 
+	'.INI', '.CFG', '.DB'
+	'.DOC', '.DOCX', '.PDF', '.DJVU', '.FB2', '.EPUB' 
+	'.DB', '.LNK', '.URL', '.HTML', 
+	'.GP3', '.GP4', '.GP5', '.GPX') 
+badfiles2 = []
+for i in badfiles: # оно же в нижнем регистре
+	i = i.lower()
+	badfiles2.append(i) 
+badfiles2 = tuple(badfiles2) 
+files2 = [f for f in os.listdir() if not f.endswith(badfiles) and not f.endswith(badfiles2)] # сканер фануковских файлов
 if 'output_mazatrol' in files2:
 	files2.remove('output_mazatrol')
 if 'output_fanuc' in files2:
 	files2.remove('output_fanuc')
-
+if 'Thumbs.db' in files2:
+	files2.remove('Thumbs.db')
 print('Найдено подходящих файлов Fanuc: ' + str(len(files2)))
 print('_'*80)
 
@@ -41,7 +56,7 @@ def mazak(self, i): #обработчик мазаковских програм�
 		times += 1
 	except:
 		os.chdir(dir)
-		print(fileold, ('{:.>'+symbols+'}').format('ошибка!'))
+		print(fileold, ('{:.>'+symbols+'}').format('не скопирован!'))
 		err.append(i) 
 
 def fanuc(self, i): #обработчик фануковских программ
@@ -81,26 +96,23 @@ def fanuc(self, i): #обработчик фануковских програм�
 			times += 1
 		except:
 			os.chdir(dir)
-			print(i, ('{:.>'+symbols2+'}').format('ошибка!'))
+			print(i, ('{:.>'+symbols2+'}').format('не скопирован!'))
 			err.append(i)
 	except(PermissionError):
 		symbols2 = str(78 - len(i))
-		print('Ошибка! В директории присутствует лишняя папка: '+'"'+str(i)+'"')
-		print(i, ('{:.>'+symbols2+'}').format('ошибка!'))
+		print('Ошибка! В обработку попала папка: '+'"'+str(i)+'"')
+		print(i, ('{:.>'+symbols2+'}').format('пропуск папки!'))
 		err.append(i)
 		pass 
-		
-
 
 root = Tk()
-root.title('ПЕРЕИМЕНОВЫВАТЕЛЬ-КОПИР')
-#root.geometry('580x295')
+root.title('Переименовыватель-копир')
 root.resizable(False, False)
 wind = Label(root, 
-	text='Переименовыватель-копир 3000 ver.0.4', 
+	text='Переименовыватель-копир 3000 ver.0.5 Limited Edition', 
 	font='Candara 14')
 windtext = Label(root, 
-	text='При запуске программа сканирует файлы в папке с собой,\nПри обработке создаются переименованные копии файлов в отдельных папках для каждой стойки.', 
+	text='При запуске программа сканирует файлы в папке с собой.\nПри обработке создаются переименованные копии файлов в отдельных папках для каждой стойки.', 
 	font='Candara 10')
 
 fr = Frame(root, 
@@ -141,7 +153,7 @@ class huita: #кнопка с вызовом мазаковской хуйни
 	global err
 	def __init__(self):
 		self.btn = Button(fr, 
-			text='Переименовыватель Mazatrol',
+			text='Переименовать файлы Mazatrol',
 			command = self.stmaz, 
 			font='Candara 12',
 			width=30,
@@ -171,7 +183,7 @@ class huita2: #кнопка с вызовом фануковской хуйни
 	global err
 	def __init__(self):
 		self.btn = Button(fr2, 
-			text='Переименовыватель Fanuc', 
+			text='Переименовать файлы Fanuc', 
 			command = self.stfan,
 			font='Candara 12',
 			width=30,
